@@ -30,7 +30,7 @@ class Process{
    */
   public function __construct($cmd, $options){
     $this->cmd = $cmd;
-    $this->options = $options;
+    $this->options = array_replace_recursive($this->options, $options);
     self::setOS();
   }
   

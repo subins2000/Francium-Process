@@ -12,9 +12,14 @@ class ProcessTest extends PHPUnit_Framework_TestCase {
       "output" => $tmpFile
     ));
     $PR->start();
-    sleep(1);
     
-    $this->assertEquals(file_get_contents($tmpFile), "helloworld");
+    $this->assertNotEquals("helloworld", file_get_contents($tmpFile));
+    
+    /**
+     * Let the bg process complete
+     */
+    sleep(1);
+    $this->assertEquals("helloworld", file_get_contents($tmpFile));
   }
   
   private function getPHPExecutable() {

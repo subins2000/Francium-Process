@@ -37,11 +37,40 @@ class Process{
   public function start(){
     if(self::$os === "linux" || self::$os === "mac"){
       $this->startOnNix();
+    }else if(self::$os === "windows"){
+      $this->startOnWindows();
     }
   }
   
   public function startOnWindows(){
+    /**
+     * Make Arguments
+     */
+    $arguments = "";
+    foreach($this->options["arguments"] as $option => $value){
+      if(is_numeric($option)){
+        $arguments = " " . escapeshellarg($value);
+      }else{
+        $arguments = " $option " . escapeshellarg($value);
+      }
+    }
     
+    /**
+     * Where to output
+     */
+    if($this->options["output"] === null){
+      $outputFile = "/dev/null";
+    }else{
+      $outputFile = $this->options["output"];
+    }
+    $output = " > " . escapeshellarg($outputFile);
+    
+    $cmd = $this->cmd . $arguments . $output;
+    
+    $bgCmd = escapeshellarg(self::getPHPExecutable()) . " " . escapeshellarg(self::getBGPath()) . " " . escapeshellarg(base64_encode($cmd)) . " > /dev/null &";
+    
+    $WshShell = new COM("WScript.Shell");
+    $oExec = $WshShell->Run($bgCmd, 0, false);
   }
   
   /**
@@ -72,9 +101,34 @@ class Process{
     }
     $output = " > " . escapeshellarg($outputFile);
     
-    $cmd = $this->cmd . $arguments . $output . " &";
-    var_dump($cmd);
-    exec($cmd);
+    $cmd = $this->cmd . $arguments . $output;
+    
+    $bgCmd = escapeshellarg(self::getPHPExecutable()) . " " . escapeshellarg(self::getBGPath()) . " " . escapeshellarg(base64_encode($cmd)) . " > /dev/null &";
+    exec($bgCmd);
+  }
+  
+  private function getBGPath(){
+    return __DIR__ . "/ProcessBG.php";
+  }
+  
+  private function getPHPExecutable() {
+    if(defined("PHP_BINARY") && PHP_BINARY != ""){
+      return PHP_BINARY;
+    }else{
+      $paths = explode(PATH_SEPARATOR, getenv('PATH'));
+      foreach ($paths as $path) {
+        // we need this for XAMPP (Windows)
+        if (strstr($path, 'php.exe') && isset($_SERVER["WINDIR"]) && file_exists($path) && is_file($path)) {
+          return $path;
+        }else {
+          $php_executable = $path . DIRECTORY_SEPARATOR . "php" . (isset($_SERVER["WINDIR"]) ? ".exe" : "");
+          if (file_exists($php_executable) && is_file($php_executable)) {
+            return $php_executable;
+          }
+        }
+      }
+    }
+    return FALSE; // not found
   }
   
 }

@@ -36,9 +36,9 @@ class Process{
   
   public function start(){
     if(self::$os === "linux" || self::$os === "mac"){
-      $this->startOnNix();
+      return $this->startOnNix();
     }else if(self::$os === "windows"){
-      $this->startOnWindows();
+      return $this->startOnWindows();
     }
   }
   
@@ -71,6 +71,8 @@ class Process{
     
     $WshShell = new COM("WScript.Shell");
     $oExec = $WshShell->Run($bgCmd, 0, false);
+    
+    return $cmd;
   }
   
   /**
@@ -105,6 +107,8 @@ class Process{
     
     $bgCmd = escapeshellarg(self::getPHPExecutable()) . " " . escapeshellarg(self::getBGPath()) . " " . escapeshellarg(base64_encode($cmd)) . " > /dev/null &";
     exec($bgCmd);
+    
+    return $cmd;
   }
   
   private function getBGPath(){

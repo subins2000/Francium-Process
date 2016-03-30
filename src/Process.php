@@ -49,9 +49,9 @@ class Process{
     $arguments = "";
     foreach($this->options["arguments"] as $option => $value){
       if(is_numeric($option)){
-        $arguments = " " . escapeshellarg($value);
+        $arguments .= " " . escapeshellarg($value);
       }else{
-        $arguments = " $option " . escapeshellarg($value);
+        $arguments .= " $option " . escapeshellarg($value);
       }
     }
     
@@ -65,7 +65,7 @@ class Process{
     }
     $output = " > " . escapeshellarg($outputFile);
     
-    $cmd = $this->cmd . $arguments . $output;
+    $cmd = escapeshellarg($this->cmd) . $arguments . $output;
     
     $bgCmd = escapeshellarg(self::getPHPExecutable()) . " " . escapeshellarg(self::getBGPath()) . " " . escapeshellarg(base64_encode($cmd)) . " > /dev/null &";
     
@@ -87,9 +87,9 @@ class Process{
     $arguments = "";
     foreach($this->options["arguments"] as $option => $value){
       if(is_numeric($option)){
-        $arguments = " " . escapeshellarg($value);
+        $arguments .= " " . escapeshellarg($value);
       }else{
-        $arguments = " $option " . escapeshellarg($value);
+        $arguments .= " $option " . escapeshellarg($value);
       }
     }
     
@@ -103,7 +103,7 @@ class Process{
     }
     $output = " > " . escapeshellarg($outputFile);
     
-    $cmd = $this->cmd . $arguments . $output;
+    $cmd = escapeshellarg($this->cmd) . $arguments . $output;
     
     $bgCmd = escapeshellarg(self::getPHPExecutable()) . " " . escapeshellarg(self::getBGPath()) . " " . escapeshellarg(base64_encode($cmd)) . " > /dev/null &";
     exec($bgCmd);

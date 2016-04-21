@@ -111,11 +111,11 @@ class Process{
     return $cmd;
   }
   
-  private function getBGPath(){
-    return __DIR__ . "/ProcessBG.php";
-  }
-  
-  private function getPHPExecutable() {
+  /**
+   * Get the Path to PHP binary file
+   * Linux - /usr/bin/php
+   */
+  public function getPHPExecutable() {
     if(defined("PHP_BINARY") && PHP_BINARY != ""){
       return PHP_BINARY;
     }else{
@@ -133,6 +133,10 @@ class Process{
       }
     }
     return FALSE; // not found
+  }
+  
+  private function getBGPath(){
+    return __DIR__ . "/ProcessBG.php";
   }
   
 }

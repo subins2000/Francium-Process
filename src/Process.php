@@ -1,5 +1,5 @@
 <?php
-namespace Francium;
+namespace Fr;
 
 class Process{
 

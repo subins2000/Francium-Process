@@ -34,15 +34,18 @@ class Process{
     self::setOS();
   }
   
-  public function start(){
+  /**
+   * Callback is called when process is started
+   */
+  public function start($callback = null){
     if(self::$os === "linux" || self::$os === "mac"){
-      return $this->startOnNix();
+      return $this->startOnNix($callback);
     }else if(self::$os === "windows"){
-      return $this->startOnWindows();
+      return $this->startOnWindows($callback);
     }
   }
   
-  public function startOnWindows(){
+  public function startOnWindows($callback){
     /**
      * Make Arguments
      */
@@ -67,10 +70,21 @@ class Process{
     
     $cmd = escapeshellarg($this->cmd) . $arguments . $output;
     
-    $bgCmd = escapeshellarg(self::getPHPExecutable()) . " " . escapeshellarg(self::getBGPath()) . " " . escapeshellarg(base64_encode($cmd)) . " > /dev/null &";
+    $bgCmd = escapeshellarg(self::getPHPExecutable()) . " " . escapeshellarg(self::getBGPath()) . " " . escapeshellarg(base64_encode($cmd)) . " > nul 2>&1";
     
     $WshShell = new COM("WScript.Shell");
     $oExec = $WshShell->Run($bgCmd, 0, false);
+    
+    if(is_callable($callback)){
+      ob_start();
+      
+      call_user_func($callback);
+      header("Content-Length: ".ob_get_length());
+      header("Connection: close");
+      
+      flush();
+      ob_flush();
+    }
     
     return $cmd;
   }
@@ -80,7 +94,7 @@ class Process{
    *    Linux - Ubuntu, Debian...
    *    Unix - Mac
    */
-  public function startOnNix(){
+  public function startOnNix($callback){
     /**
      * Make Arguments
      */
@@ -105,8 +119,19 @@ class Process{
     
     $cmd = escapeshellarg($this->cmd) . $arguments . $output;
     
-    $bgCmd = escapeshellarg(self::getPHPExecutable()) . " " . escapeshellarg(self::getBGPath()) . " " . escapeshellarg(base64_encode($cmd)) . " > /dev/null &";
+    $bgCmd = escapeshellcmd(self::getPHPExecutable()) . " " . escapeshellarg(self::getBGPath()) . " " . escapeshellarg(base64_encode($cmd)) . " > /dev/null &";
     exec($bgCmd);
+    
+    if(is_callable($callback)){
+      ob_start();
+      
+      call_user_func($callback);
+      header("Content-Length: ".ob_get_length());
+      header("Connection: close");
+      
+      flush();
+      ob_flush();
+    }
     
     return $cmd;
   }

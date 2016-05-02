@@ -1,5 +1,5 @@
 <?php
-use Francium\Process;
+use Fr\Process;
 
 class ProcessTest extends PHPUnit_Framework_TestCase {
 

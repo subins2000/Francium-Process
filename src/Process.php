@@ -74,7 +74,7 @@ class Process{
     
     $cmd = escapeshellarg($this->cmd) . $arguments . $output;
     
-    $bgCmd = escapeshellarg(self::getPHPExecutable()) . " " . escapeshellarg(self::getBGPath()) . " " . escapeshellarg(base64_encode($cmd)) . " > nul 2>&1";
+    $bgCmd = escapeshellcmd(self::getPHPExecutable()) . " " . escapeshellarg(self::getBGPath()) . " " . escapeshellarg(base64_encode($cmd)) . " > nul 2>&1";
     
     $WshShell = new COM("WScript.Shell");
     $oExec = $WshShell->Run($bgCmd, 0, false);
@@ -154,7 +154,7 @@ class Process{
    * Get the Path to PHP binary file
    * Linux - /usr/bin/php
    */
-  public function getPHPExecutable() {
+  public static function getPHPExecutable() {
     if(defined("PHP_BINARY") && PHP_BINARY != ""){
       return PHP_BINARY;
     }else{

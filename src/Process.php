@@ -45,6 +45,10 @@ class Process{
     }
   }
   
+  /**
+   * @param $callback function - Callback made when process started. If this is present, then the connection between server and browser is closed too
+   * @return string - The command executed
+   */
   public function startOnWindows($callback){
     /**
      * Make Arguments
@@ -75,6 +79,10 @@ class Process{
     $WshShell = new COM("WScript.Shell");
     $oExec = $WshShell->Run($bgCmd, 0, false);
     
+    /**
+     * If callback is valid, call callback,
+     * then close connection
+     */
     if(is_callable($callback)){
       ob_start();
       
@@ -93,6 +101,8 @@ class Process{
    * *nix systems :
    *    Linux - Ubuntu, Debian...
    *    Unix - Mac
+   * @param $callback function - Callback made when process started. If this is present, then the connection between server and browser is closed too
+   * @return string - The command executed
    */
   public function startOnNix($callback){
     /**
@@ -122,6 +132,10 @@ class Process{
     $bgCmd = escapeshellcmd(self::getPHPExecutable()) . " " . escapeshellarg(self::getBGPath()) . " " . escapeshellarg(base64_encode($cmd)) . " > /dev/null &";
     exec($bgCmd);
     
+    /**
+     * If callback is valid, call callback,
+     * then close connection
+     */
     if(is_callable($callback)){
       ob_start();
       

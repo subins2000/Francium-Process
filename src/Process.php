@@ -1,6 +1,34 @@
 <?php
 namespace Fr;
 
+/**
+.---------------------------------------------------------------------------.
+| The Francium Project                                                      |
+| ------------------------------------------------------------------------- |
+| This software 'Process' is a part of the Francium (Fr) project.           |
+| http://subinsb.com/the-francium-project                                   |
+| ------------------------------------------------------------------------- |
+|     Author: Subin Siby                                                    |
+| Copyright (c) 2014 - 2015, Subin Siby. All Rights Reserved.               |
+| ------------------------------------------------------------------------- |
+|   License: Distributed under the Apache License, Version 2.0              |
+|            http://www.apache.org/licenses/LICENSE-2.0                     |
+| This program is distributed in the hope that it will be useful - WITHOUT  |
+| ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or     |
+| FITNESS FOR A PARTICULAR PURPOSE.                                         |
+'---------------------------------------------------------------------------'
+*/
+
+/**
+.---------------------------------------------------------------------------.
+|  Software:      Francium Process                                          |
+|  Version:       0.3.1 (Last Updated on 2016 May 07)                       |
+|  Contact:       http://github.com/subins2000/Francium-Process             |
+|  Documentation: https://subinsb.com/francium-process                      |
+|  Support:       https://subinsb.com/francium-process                      |
+'---------------------------------------------------------------------------'
+*/
+
 class Process{
 
   public static $os = null;
@@ -66,7 +94,7 @@ class Process{
      * Where to output
      */
     if($this->options["output"] === null){
-      $outputFile = "/dev/null";
+      $outputFile = "nul";
     }else{
       $outputFile = $this->options["output"];
     }
@@ -74,10 +102,13 @@ class Process{
     
     $cmd = escapeshellarg($this->cmd) . $arguments . $output;
     
-    $bgCmd = escapeshellcmd(self::getPHPExecutable()) . " " . escapeshellarg(self::getBGPath()) . " " . escapeshellarg(base64_encode($cmd)) . " > nul 2>&1";
+    $bgCmd = "start /B " . escapeshellcmd(self::getPHPExecutable()) . " " . escapeshellarg(self::getBGPath()) . " " . escapeshellarg(base64_encode($cmd)) . " > nul 2>&1";
+    pclose(popen($bgCmd, "r"));
     
-    $WshShell = new COM("WScript.Shell");
+    /**
+    $WshShell = new \COM("WScript.Shell");
     $oExec = $WshShell->Run($bgCmd, 0, false);
+    */
     
     /**
      * If callback is valid, call callback,

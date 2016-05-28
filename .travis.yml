@@ -38,6 +38,7 @@ before_script:
   - if [[ $TRAVIS_OS_NAME == 'osx' ]] ; then export PATH="$(brew --prefix homebrew/php/${OSX_PHP_VERSION})/bin:$PATH" ; fi; # app php to path
   - if [[ $TRAVIS_OS_NAME == 'osx' ]] ; then brew install coreutils ; fi; # truncate command:
   - composer self-update
-  - composer install --prefer-source --no-interaction --dev
+  - composer install --prefer-dist --no-interaction --dev
+  - composer update
  
-script: phpunit
+script: vendor/bin/phpunit

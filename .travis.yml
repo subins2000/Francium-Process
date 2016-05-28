@@ -9,7 +9,6 @@ php:
 
 os:
   - linux
-  - osx
 
 matrix:
   include:
@@ -28,10 +27,6 @@ matrix:
         # Updating PHP to 7.0.x
         - curl -s http://php-osx.liip.ch/install.sh | bash -s 7.0
         - export PATH=/usr/local/php5/bin:$PATH
-
-after_failure:
-  - php --syntax-check --define display_errors=On --define log_errors=Off ./spec/files/good.php
-  - php --syntax-check --define display_errors=On --define log_errors=Off ./spec/files/bad.php
  
 before_script:
   - composer self-update

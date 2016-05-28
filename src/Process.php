@@ -199,7 +199,7 @@ class Process{
     if(self::$os === "linux" || self::$os === "mac"){
       return exec("kill $(pstree -pn $(ps -ef | awk '/[". substr($this->uniqueID, 0, 1) ."]". substr($this->uniqueID, 1) ."/{print $2}') | grep -o '([[:digit:]]*)' |grep -o '[[:digit:]]*')");
     }else if(self::$os === "windows"){
-      return exec("");
+      return exec("wmic Path win32_process Where \"CommandLine Like '%". $this->uniqueID ."%'\" Call Terminate");
     }
   }
   

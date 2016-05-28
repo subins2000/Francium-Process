@@ -11,13 +11,12 @@ os:
   - linux
 
 matrix:
-  include:
+  include:        
     - os: osx
-      language: generic
-      install:
-        # Updating PHP to 5.6.x
-        - curl -s http://php-osx.liip.ch/install.sh | bash -s 5.6
-        - export PATH=/usr/local/php5/bin:$PATH
+      env: OSX_PHP_VERSION=php56
+
+    - os: osx
+      env: OSX_PHP_VERSION=php70
         
 before_script:
   - if [[ $TRAVIS_OS_NAME == 'osx' ]] ; then brew update ; fi; # travis image is quite old, update to have latest dependecies available

@@ -5,7 +5,7 @@ class ProcessTest extends PHPUnit_Framework_TestCase {
 
   public function testStartAProcess(){
     $tmpFile = tempnam(sys_get_temp_dir(), "FranciumProcess");
-    $PR = new Process($this->getPHPExecutable(), array(
+    $PR = new Process(Process::getPHPExecutable(), array(
       "arguments" => array(
         "-r" => "echo 'hello';echo 'world';"
       ),
@@ -20,26 +20,36 @@ class ProcessTest extends PHPUnit_Framework_TestCase {
      */
     sleep(1);
     $this->assertEquals("helloworld", file_get_contents($tmpFile));
+    
+    // Remove temporary file
+    unlink($tmpFile);
   }
   
-  private function getPHPExecutable() {
-    if(defined("PHP_BINARY") && PHP_BINARY != ""){
-      return PHP_BINARY;
-    }else{
-      $paths = explode(PATH_SEPARATOR, getenv('PATH'));
-      foreach ($paths as $path) {
-        // we need this for XAMPP (Windows)
-        if (strstr($path, 'php.exe') && isset($_SERVER["WINDIR"]) && file_exists($path) && is_file($path)) {
-          return $path;
-        }else {
-          $php_executable = $path . DIRECTORY_SEPARATOR . "php" . (isset($_SERVER["WINDIR"]) ? ".exe" : "");
-          if (file_exists($php_executable) && is_file($php_executable)) {
-            return $php_executable;
-          }
-        }
-      }
-    }
-    return FALSE; // not found
+  public function testStopAProcess(){
+    $tmpFile = tempnam(sys_get_temp_dir(), "FranciumProcess");
+    $PR = new Process(Process::getPHPExecutable(), array(
+      "arguments" => array(
+        "-r" => "file_put_contents('$tmpFile', 'hello');sleep('3');file_put_contents('$tmpFile', 'world');"
+      )
+    ));
+    $PR->start();
+    
+    /**
+     * Let the bg process start
+     */
+    sleep(1);
+    $this->assertEquals("hello", file_get_contents($tmpFile));
+    
+    var_dump($PR->stop());
+    
+    /**
+     * It would take 5 seconds for bg process to complete
+     */
+    sleep(3);
+    $this->assertNotEquals("world", file_get_contents($tmpFile));
+    
+    // Remove temporary file
+    unlink($tmpFile);
   }
 
 }
